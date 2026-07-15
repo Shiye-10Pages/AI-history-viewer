@@ -7,6 +7,28 @@
 - **Claude 网页版数据导出** —— 在 claude.ai 申请「导出数据」后,邮件里那个 zip 解压出的 `conversations.json`
 - **Claude Code 会话日志** —— 命令行版 Claude 的 `.jsonl`,通常在 `~/.claude/projects/<项目>/<会话>.jsonl`
 
+## 三步上手
+
+**① 从 Claude 导出聊天记录**
+
+在 claude.ai 打开「设置 → 隐私」,点「导出数据」,邮箱会收到下载链接;下载并解压 zip,得到 `conversations.json`。(Claude Code 用户直接用 `~/.claude/projects/…/*.jsonl`,可跳过这步。)
+
+![第一步:从 Claude 导出数据](docs/screenshots/step1-export.png)
+
+**② 拖进 AI History Viewer**
+
+双击 `index.html` 打开,把 `conversations.json` 或 `.jsonl` 拖进页面(可多选、可混合)。全程在本机浏览器解析,**不联网、不上传**。
+
+![第二步:拖入文件](docs/screenshots/step2-upload.png)
+
+**③ 看到还原后的对话**
+
+左侧按时间列出全部对话,右侧还原完整往来——Markdown、代码块、表格、列表原样渲染,支持全文搜索与一键导出 Markdown。
+
+![第三步:还原后的对话页面](docs/screenshots/step3-result.png)
+
+> 上图为**真实渲染效果**,对话内容为虚构演示。
+
 ## 功能
 
 - **Markdown 渲染**:标题、列表、**粗体**、`行内代码`、代码块(带一键复制)、表格、引用、链接,原样还原 Claude 的排版

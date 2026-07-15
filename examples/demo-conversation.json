@@ -1,0 +1,57 @@
+[
+  {
+    "uuid": "demo-0001",
+    "name": "用 Python 读取 CSV 求平均值",
+    "created_at": "2026-07-15T09:20:00.000000Z",
+    "chat_messages": [
+      {
+        "uuid": "d1",
+        "sender": "human",
+        "created_at": "2026-07-15T09:20:00.000000Z",
+        "text": "帮我写个 Python 函数,从 CSV 里读某一列求平均值,顺便解释下。",
+        "content": [{ "type": "text", "text": "帮我写个 Python 函数,从 CSV 里读某一列求平均值,顺便解释下。" }],
+        "attachments": [],
+        "files": []
+      },
+      {
+        "uuid": "d2",
+        "sender": "assistant",
+        "created_at": "2026-07-15T09:20:18.000000Z",
+        "text": "## 思路",
+        "content": [
+          {
+            "type": "text",
+            "text": "## 思路\n\n分三步:**读文件 → 取指定列 → 求平均**。用标准库 `csv` 就够,不必上 pandas。\n\n```python\nimport csv\n\ndef column_average(path, column):\n    \"\"\"求 CSV 中某一列的平均值(自动跳过空值)。\"\"\"\n    total, count = 0.0, 0\n    with open(path, newline=\"\", encoding=\"utf-8\") as f:\n        for row in csv.DictReader(f):\n            value = row.get(column, \"\").strip()\n            if value:\n                total += float(value)\n                count += 1\n    return total / count if count else 0.0\n```\n\n几点说明:\n\n- 用 `DictReader` 按**列名**取值,不用记列序号\n- `if value` 跳过空单元格,避免 `float(\"\")` 抛错\n- 末尾 `if count else 0.0` 防止空文件时除零\n\n| 输入 | 返回 |\n|------|------|\n| 有若干行有效数据 | 平均值 |\n| 空文件 / 全空列 | 0.0 |\n\n> 需要处理千分位或百分号,再在 `float()` 前加一层清洗即可。"
+          }
+        ],
+        "attachments": [],
+        "files": []
+      }
+    ]
+  },
+  {
+    "uuid": "demo-0002",
+    "name": "一句话说清 REST 和 GraphQL 区别",
+    "created_at": "2026-07-14T16:05:00.000000Z",
+    "chat_messages": [
+      {
+        "uuid": "d3",
+        "sender": "human",
+        "created_at": "2026-07-14T16:05:00.000000Z",
+        "text": "一句话说清 REST 和 GraphQL 的区别。",
+        "content": [{ "type": "text", "text": "一句话说清 REST 和 GraphQL 的区别。" }],
+        "attachments": [],
+        "files": []
+      },
+      {
+        "uuid": "d4",
+        "sender": "assistant",
+        "created_at": "2026-07-14T16:05:09.000000Z",
+        "text": "REST 是服务器定好一堆固定端点、每个返回固定结构;GraphQL 是一个端点、客户端自己声明要哪些字段,按需取数。",
+        "content": [{ "type": "text", "text": "REST 是服务器定好一堆固定端点、每个返回固定结构;GraphQL 是一个端点、客户端自己声明要哪些字段,按需取数。" }],
+        "attachments": [],
+        "files": []
+      }
+    ]
+  }
+]

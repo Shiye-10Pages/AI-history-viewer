@@ -570,6 +570,19 @@
 
   // expose for automated tests
   window.__viewer = { detectAndParse:detectAndParse, md:md, get convos(){ return convos; } };
+
+  // 可选:?load=<同源相对路径>[,更多] 自动载入(用于演示 / 书签 / 生成截图)
+  (function(){
+    var m = /[?&]load=([^&]+)/.exec(location.search);
+    if(!m) return;
+    var urls = decodeURIComponent(m[1]).split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+    var pending = urls.length, total = 0;
+    urls.forEach(function(u){
+      if(/^https?:|^\/\//i.test(u)){ if(--pending===0 && total) afterLoad(total); return; } // 仅允许同源相对路径
+      fetch(u).then(function(r){ return r.text(); }).then(function(t){ total += ingest(u.split('/').pop(), t); })
+        .catch(function(){}).then(function(){ if(--pending===0 && total) afterLoad(total); });
+    });
+  })();
 })();
 </script>
 </body>
