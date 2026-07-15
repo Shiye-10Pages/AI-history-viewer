@@ -1,0 +1,52 @@
+# AI History Viewer
+
+把 **Claude 导出的聊天记录**重新还原成一条条可读的对话——单个 HTML 文件,双击就用,**纯本地、不联网、不上传**。
+
+支持两种来源:
+
+- **Claude 网页版数据导出** —— 在 claude.ai 申请「导出数据」后,邮件里那个 zip 解压出的 `conversations.json`
+- **Claude Code 会话日志** —— 命令行版 Claude 的 `.jsonl`,通常在 `~/.claude/projects/<项目>/<会话>.jsonl`
+
+## 功能
+
+- **Markdown 渲染**:标题、列表、**粗体**、`行内代码`、代码块(带一键复制)、表格、引用、链接,原样还原 Claude 的排版
+- **全文搜索**:标题 + 正文一起搜,侧栏给出命中片段并高亮
+- **两种格式自动识别**:拖 `.json` 认网页导出,拖 `.jsonl` 认 Claude Code;可一次多选、混合加载
+- **Claude Code 细节**:思考(thinking)、工具调用、工具结果、模型名都分区展示,可折叠
+- **导出**:任意一段对话可一键导出成 Markdown 存档
+- **深色模式**:跟随系统
+
+## 用法
+
+1. 下载本仓库的 `index.html`(单文件即可,不需要其余文件)
+2. 双击用浏览器打开
+3. 把 `conversations.json` 或 `.jsonl` 拖进去,或点右上角「加载文件」
+
+### 找到 Claude Code 日志
+
+```
+~/.claude/projects/<把路径里的斜杠换成横线的项目名>/<会话-id>.jsonl
+```
+
+每个 `.jsonl` 是一次会话。可以一次把多个 `.jsonl` 一起拖进来。
+
+## 隐私
+
+所有解析都在你本机浏览器里完成,页面**没有任何网络请求**,你的聊天记录不会离开这台电脑。
+
+## 已知边界
+
+- 数据导出通常只含附件文件名、不含原图,所以图片显示为占位说明
+- **ChatGPT 导出**(节点树 `mapping` 格式)会被识别但暂不支持渲染,已列入 roadmap
+
+## Roadmap
+
+- [ ] ChatGPT 导出(`conversations.json` 的 mapping 树)文字级支持
+- [ ] 直接拖 `.zip`,免手动解压
+- [ ] 关联 `projects.json`,标注对话所属 Project
+
+## 许可证
+
+[PolyForm Strict License 1.0.0](LICENSE.md) —— 个人及非商业用途免费;**禁止商用**,**禁止分发或二次开发**。
+
+© 2026 十页AI工作室
