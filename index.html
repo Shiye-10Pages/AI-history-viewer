@@ -108,6 +108,10 @@
   .err-box { max-width:620px; margin:12px auto; padding:12px 16px; border:1px solid #f0b4b4;
     background:#fdecec; color:#7f1d1d; border-radius:8px; font-size:13px; }
   @media (prefers-color-scheme: dark) { .err-box { background:#3a1f1f; border-color:#5f2f2f; color:#fca5a5; } }
+  footer { padding:6px 16px; border-top:1px solid var(--border); background:var(--panel);
+    font-size:12px; color:var(--muted); text-align:center; flex-shrink:0; }
+  footer a { color:var(--accent); text-decoration:none; font-weight:600; }
+  footer a:hover { text-decoration:underline; }
 </style>
 </head>
 <body>
@@ -134,6 +138,7 @@
     </div>
   </div>
 </div>
+<footer>十页AI 出品 · <a href="https://shiyeai.cn" target="_blank" rel="noopener noreferrer">shiyeai.cn</a> — 更多 AI 工具与深度内容</footer>
 <script>
 (function () {
   'use strict';

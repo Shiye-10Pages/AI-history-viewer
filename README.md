@@ -5,13 +5,13 @@
 支持两种来源:
 
 - **Claude 网页版数据导出** —— 在 claude.ai 申请「导出数据」后,邮件里那个 zip 解压出的 `conversations.json`
-- **Claude Code 会话日志** —— 命令行版 Claude 的 `.jsonl`,通常在 `~/.claude/projects/<项目>/<会话>.jsonl`
+- **Claude Code 会话日志** —— 命令行版 Claude 的 `.jsonl`,通常在 `~/.claude/projects/<项目>/<会话>.jsonl`(Windows:`C:\Users\<用户名>\.claude\projects\…`)
 
 ## 三步上手
 
 **① 从 Claude 导出聊天记录**
 
-在 claude.ai 打开「设置 → 隐私」,点「导出数据」,邮箱会收到下载链接;下载并解压 zip,得到 `conversations.json`。(Claude Code 用户直接用 `~/.claude/projects/…/*.jsonl`,可跳过这步。)
+在 claude.ai 打开「设置 → 隐私」,点「导出数据」,邮箱会收到下载链接;下载并解压 zip,得到 `conversations.json`。(Claude Code 用户直接用 `~/.claude/projects/…/*.jsonl`,Windows 在 `C:\Users\<用户名>\.claude\projects\…`,可跳过这步。)
 
 ![第一步:从 Claude 导出数据](docs/screenshots/step1-export.png)
 
@@ -47,8 +47,11 @@
 ### 找到 Claude Code 日志
 
 ```
-~/.claude/projects/<把路径里的斜杠换成横线的项目名>/<会话-id>.jsonl
+macOS / Linux:  ~/.claude/projects/<把路径里的斜杠换成横线的项目名>/<会话-id>.jsonl
+Windows:        C:\Users\<你的用户名>\.claude\projects\<项目名>\<会话-id>.jsonl
 ```
+
+> Windows 提示:`.claude` 是隐藏文件夹,在资源管理器地址栏直接粘贴 `%USERPROFILE%\.claude\projects` 回车即可进入。
 
 每个 `.jsonl` 是一次会话。可以一次把多个 `.jsonl` 一起拖进来。
 
@@ -69,8 +72,12 @@
 - [ ] 直接拖 `.zip`,免手动解压
 - [ ] 关联 `projects.json`,标注对话所属 Project
 
+## 关于十页AI
+
+本工具由 **[十页AI](https://shiyeai.cn)** 出品。更多 AI 工具、深度内容与超级指令,访问官网 👉 **[shiyeai.cn](https://shiyeai.cn)**
+
 ## 许可证
 
 [PolyForm Strict License 1.0.0](LICENSE.md) —— 个人及非商业用途免费;**禁止商用**,**禁止分发或二次开发**。
 
-© 2026 十页AI工作室
+© 2026 [十页AI工作室](https://shiyeai.cn)
