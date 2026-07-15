@@ -204,11 +204,13 @@
       }
       if(/^\s*([-*+]|\d+\.)\s+/.test(line)){
         var ordered = /^\s*\d+\.\s+/.test(line), items = [];
+        var startAt = ordered ? (line.match(/^\s*(\d+)\./)||[])[1] : null;
         while(i<lines.length && /^\s*([-*+]|\d+\.)\s+/.test(lines[i])){
           items.push(lines[i].replace(/^\s*([-*+]|\d+\.)\s+/,'')); i++;
         }
         var tag = ordered?'ol':'ul';
-        out += '<'+tag+'>'+items.map(function(it){ return '<li>'+inline(escapeHtml(it))+'</li>'; }).join('')+'</'+tag+'>';
+        var attr = (ordered && startAt && startAt !== '1') ? ' start="'+startAt+'"' : '';
+        out += '<'+tag+attr+'>'+items.map(function(it){ return '<li>'+inline(escapeHtml(it))+'</li>'; }).join('')+'</'+tag+'>';
         continue;
       }
       if(/^\s*$/.test(line)){ i++; continue; }
@@ -361,7 +363,6 @@
     if(!q) return '';
     var lc = c._search, i = lc.indexOf(q);
     if(i < 0) return '';
-    if(c.title.toLowerCase().indexOf(q) >= 0 && i < 0) return '';
     var s = Math.max(0, i-24);
     var frag = c._plain.slice(s, i + q.length + 46).replace(/\s+/g,' ').trim();
     return (s>0?'…':'') + frag + '…';
@@ -438,8 +439,17 @@
     return box;
   }
 
+  var renderToken = 0;
+  function addCopyButtons(root){
+    root.querySelectorAll('pre').forEach(function(pre){
+      if(pre.querySelector('.copy')) return;
+      var b = document.createElement('button'); b.className='copy'; b.type='button'; b.textContent='复制';
+      pre.appendChild(b);
+    });
+  }
   function renderView(){
     var c = convos.find(function(x){ return x.id===activeId; });
+    var token = ++renderToken;   // 任何进行中的分片渲染就此作废
     if(!c){ viewEl.innerHTML = '<div id="empty">← 从左边选一段对话</div>'; return; }
     viewEl.innerHTML = '';
     var bar = document.createElement('div'); bar.className='toolbar';
@@ -449,13 +459,17 @@
     var meta = document.createElement('div'); meta.className='conv-meta';
     meta.textContent = (c.source==='claude-code'?'Claude Code':'Claude 网页') + ' · ' + fmt(c.created_at) + ' · 共 ' + c.messages.length + ' 条消息';
     viewEl.appendChild(bar); viewEl.appendChild(h); viewEl.appendChild(meta);
-    c.messages.forEach(function(m){ viewEl.appendChild(renderMessage(m)); });
-    viewEl.querySelectorAll('pre').forEach(function(pre){
-      if(pre.querySelector('.copy')) return;
-      var b = document.createElement('button'); b.className='copy'; b.type='button'; b.textContent='复制';
-      pre.appendChild(b);
-    });
     viewEl.scrollTop = 0;
+    // 分片渲染:大会话不会把主线程一次性冻死,每帧只处理一批
+    var msgs = c.messages, n = msgs.length, CHUNK = 40, idx = 0;
+    (function step(){
+      if(token !== renderToken) return;   // 已切到别的对话,停止本次渲染
+      var frag = document.createDocumentFragment();
+      var end = Math.min(idx + CHUNK, n);
+      for(; idx < end; idx++){ var el = renderMessage(msgs[idx]); addCopyButtons(el); frag.appendChild(el); }
+      viewEl.appendChild(frag);
+      if(idx < n) requestAnimationFrame(step);
+    })();
   }
 
   function exportMd(c){
@@ -497,6 +511,7 @@
     var parsed;
     try { parsed = detectAndParse(name, text); }
     catch(e){ showError(name+':'+(e.message||e)); return 0; }
+    if(parsed) parsed = parsed.filter(function(c){ return c.messages.length; });
     if(!parsed || !parsed.length){ showError(name+':解析成功但没有对话内容。'); return 0; }
     parsed.forEach(function(c){ convos.push(c); });
     return parsed.length;
@@ -506,7 +521,7 @@
     if(!convos.length) return;
     if(dropEl && dropEl.parentNode) dropEl.remove();
     searchEl.hidden = false;
-    convos.sort(function(a,b){ return (new Date(b.created_at)||0) - (new Date(a.created_at)||0); });
+    convos.sort(function(a,b){ return (+new Date(b.created_at) || 0) - (+new Date(a.created_at) || 0); });
     if(!activeId || !convos.find(function(c){ return c.id===activeId; })) activeId = convos[0].id;
     updateCounts(); renderList(); renderView();
   }
@@ -540,10 +555,16 @@
     var pre = e.target.closest('pre'); if(!pre) return;
     var code = pre.querySelector('code');
     var txt = code ? code.textContent : pre.textContent;
+    var btn = e.target;
+    var done = function(ok){ btn.textContent = ok?'已复制':'复制失败'; setTimeout(function(){ btn.textContent='复制'; },1200); };
     if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(txt).then(function(){
-        e.target.textContent='已复制'; setTimeout(function(){ e.target.textContent='复制'; },1200);
-      });
+      navigator.clipboard.writeText(txt).then(function(){ done(true); }, function(){ done(false); });
+    } else {
+      try {
+        var ta = document.createElement('textarea'); ta.value = txt;
+        ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy'); document.body.removeChild(ta); done(true);
+      } catch(err){ done(false); }
     }
   });
 
